@@ -18,6 +18,7 @@ const check_equality = function (book) {
 function renderBook() {
   let bookFragment = document.createDocumentFragment();
   let bookRow = document.createElement("tr");
+  bookRow.classList.add("book-row");
 
   let title = document.createElement("td");
   title.textContent = this.title;
@@ -36,15 +37,26 @@ function renderBook() {
   bookRow.appendChild(status);
 
   let removeButton = document.createElement("td");
-  removeButton.textContent = "removeButton";
-  bookRow.appendChild(removeButton);
+  removeButton.appendChild(renderDeleteButton(this.id));
 
+  bookRow.appendChild(removeButton);
   bookFragment.appendChild(bookRow);
   return bookFragment;
 }
 
 Book.prototype.eq = check_equality;
 Book.prototype.render = renderBook;
+
+function renderDeleteButton(id) {
+  const deleteButton = document.createElement("button");
+  deleteButton.dataset.bookId = id;
+  deleteButton.addEventListener("click", onDeleteButtonClicked);
+  const deleteImg = document.createElement("img");
+  deleteImg.src = "./assets/delete.svg";
+  deleteImg.className = "delete-icon";
+  deleteButton.appendChild(deleteImg);
+  return deleteButton;
+}
 
 function bookExistsInLibrary(book) {
   return library.find((item) => item.eq(book)) ? true : false;
@@ -69,11 +81,24 @@ function updateBookInLibrary(id, book) {
   }
 }
 
+/* Functions that touch the DOM */
+
+function clearBookRows() {
+  const book_rows = document.querySelectorAll(".book-row");
+  book_rows.forEach((row) => row.remove());
+}
+
 function renderLibrary() {
-  const book_rows = document.querySelector(".book-rows");
+  const book_rows_container = document.querySelector(".book-rows");
   const book_rows_fragment = document.createDocumentFragment();
   library.forEach((book) => book_rows_fragment.appendChild(book.render()));
-  book_rows.appendChild(book_rows_fragment);
+  book_rows_container.appendChild(book_rows_fragment);
+}
+
+function onDeleteButtonClicked(e) {
+  removeBookFromLibrary(e.target.dataset.bookId);
+  clearBookRows();
+  renderLibrary();
 }
 
 let book = new Book("harry potter", "J k Rowling", 500, false);
@@ -94,3 +119,5 @@ addBookToLibrary(book4);
 
 console.log("Render book");
 renderLibrary(book4);
+
+console.log(renderDeleteButton(4));
