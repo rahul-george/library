@@ -138,10 +138,15 @@ function onSubmitButtonClicked(e) {
   }
 
   addBookToLibrary(book);
-  e.target.reset()
+  e.target.reset();
   clearBookRows();
   renderLibrary();
 }
+
+// Adding some books to the library
+addBookToLibrary(new Book("The Wall", "Rahul Dravid", 500, false));
+addBookToLibrary(new Book("Harry Potter Series", "J K Rowling", 500, false));
+addBookToLibrary(new Book("Atomic Habits", "James Clear", 500, false));
 
 const addBookForm = document.getElementById("add-book-form");
 addBookForm.addEventListener("submit", onSubmitButtonClicked);
