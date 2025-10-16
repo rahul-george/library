@@ -15,7 +15,36 @@ const check_equality = function (book) {
   return `${this.title} - ${this.author}` === `${book.title} - ${book.author}`;
 };
 
+function renderBook() {
+  let bookFragment = document.createDocumentFragment();
+  let bookRow = document.createElement("tr");
+
+  let title = document.createElement("td");
+  title.textContent = this.title;
+  bookRow.appendChild(title);
+
+  let author = document.createElement("td");
+  author.textContent = this.author;
+  bookRow.appendChild(author);
+
+  let pages = document.createElement("td");
+  pages.textContent = this.pages;
+  bookRow.appendChild(pages);
+
+  let status = document.createElement("td");
+  status.textContent = this.completed_reading ? "yes" : "no";
+  bookRow.appendChild(status);
+
+  let removeButton = document.createElement("td");
+  removeButton.textContent = "removeButton";
+  bookRow.appendChild(removeButton);
+
+  bookFragment.appendChild(bookRow);
+  return bookFragment;
+}
+
 Book.prototype.eq = check_equality;
+Book.prototype.render = renderBook;
 
 function bookExistsInLibrary(book) {
   return library.find((item) => item.eq(book)) ? true : false;
@@ -40,17 +69,28 @@ function updateBookInLibrary(id, book) {
   }
 }
 
-let book = new Book("harry potter");
+function renderLibrary() {
+  const book_rows = document.querySelector(".book-rows");
+  const book_rows_fragment = document.createDocumentFragment();
+  library.forEach((book) => book_rows_fragment.appendChild(book.render()));
+  book_rows.appendChild(book_rows_fragment);
+}
+
+let book = new Book("harry potter", "J k Rowling", 500, false);
 library.push(book);
 console.log(library);
-let book2 = new Book("harry potter");
+let book2 = new Book("Atomic Habits", "James Clear", 200, true);
 addBookToLibrary(book2);
 addBookToLibrary(book2);
 addBookToLibrary(book2);
-let book3 = new Book("Wings Of Fire");
-let book4 = new Book("The Wall");
+let book3 = new Book("Wings Of Fire", "APJ", 100, false);
+let book4 = new Book("The Wall", "Rahul Dravid", 250, false);
 addBookToLibrary(book3);
-removeBookFromLibrary(book2.id);
+// removeBookFromLibrary(book2.id);
 console.log({ library });
 console.log(bookExistsInLibrary(book3));
 console.log(bookExistsInLibrary(book4));
+addBookToLibrary(book4);
+
+console.log("Render book");
+renderLibrary(book4);
