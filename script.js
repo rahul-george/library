@@ -33,7 +33,7 @@ function renderBook() {
   bookRow.appendChild(pages);
 
   let status = document.createElement("td");
-  status.textContent = this.completed_reading ? "yes" : "no";
+  status.appendChild(renderMarkAsReadCheckbox(this.id, this.completed_reading));
   bookRow.appendChild(status);
 
   let removeButton = document.createElement("td");
@@ -58,6 +58,15 @@ function renderDeleteButton(id) {
   return deleteButton;
 }
 
+function renderMarkAsReadCheckbox(id, status) {
+  const checkboxInput = document.createElement("input");
+  checkboxInput.type = "checkbox";
+  checkboxInput.checked = status;
+  checkboxInput.dataset.bookId = id;
+  checkboxInput.addEventListener("click", onMarkAsReadCheckboxClicked);
+  return checkboxInput;
+}
+
 function bookExistsInLibrary(book) {
   return library.find((item) => item.eq(book)) ? true : false;
 }
@@ -75,10 +84,14 @@ function removeBookFromLibrary(id) {
 
 function updateBookInLibrary(id, book) {
   book.id = id;
-  const index = library.findIndex((book) => book.id === id);
+  const index = library.findIndex((item) => item.id === id);
   if (index !== -1) {
     library.splice(index, 1, book);
   }
+}
+
+function getBookFromLibraryById(id) {
+  return library.find((item) => item.id === id);
 }
 
 /* Functions that touch the DOM */
@@ -99,6 +112,14 @@ function onDeleteButtonClicked(e) {
   removeBookFromLibrary(e.target.dataset.bookId);
   clearBookRows();
   renderLibrary();
+}
+
+function onMarkAsReadCheckboxClicked(e) {
+  const book = getBookFromLibraryById(e.target.dataset.bookId);
+  book.completed_reading = e.target.checked;
+  console.log(book);
+  updateBookInLibrary(book.id, book);
+  console.log(library);
 }
 
 let book = new Book("harry potter", "J k Rowling", 500, false);
