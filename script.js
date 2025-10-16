@@ -122,23 +122,27 @@ function onMarkAsReadCheckboxClicked(e) {
   console.log(library);
 }
 
-let book = new Book("harry potter", "J k Rowling", 500, false);
-library.push(book);
-console.log(library);
-let book2 = new Book("Atomic Habits", "James Clear", 200, true);
-addBookToLibrary(book2);
-addBookToLibrary(book2);
-addBookToLibrary(book2);
-let book3 = new Book("Wings Of Fire", "APJ", 100, false);
-let book4 = new Book("The Wall", "Rahul Dravid", 250, false);
-addBookToLibrary(book3);
-// removeBookFromLibrary(book2.id);
-console.log({ library });
-console.log(bookExistsInLibrary(book3));
-console.log(bookExistsInLibrary(book4));
-addBookToLibrary(book4);
+function onSubmitButtonClicked(e) {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const book = new Book(
+    formData.get("title"),
+    formData.get("author"),
+    formData.get("page_count"),
+    formData.get("completed_reading") === "on" ? true : false
+  );
 
-console.log("Render book");
-renderLibrary(book4);
+  if (bookExistsInLibrary(book)) {
+    alert("Book with same name and author exists in the library");
+    return;
+  }
 
-console.log(renderDeleteButton(4));
+  addBookToLibrary(book);
+  e.target.reset()
+  clearBookRows();
+  renderLibrary();
+}
+
+const addBookForm = document.getElementById("add-book-form");
+addBookForm.addEventListener("submit", onSubmitButtonClicked);
+renderLibrary();
